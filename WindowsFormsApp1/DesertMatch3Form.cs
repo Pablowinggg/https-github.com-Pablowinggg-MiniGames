@@ -33,9 +33,6 @@ namespace GameCollection.Forms
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            // 
-            // Form1
-            // 
             this.ClientSize = new System.Drawing.Size(300, 600);
             this.Name = "Form1";
             this.ResumeLayout(false);
