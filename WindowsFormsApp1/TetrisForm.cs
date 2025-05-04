@@ -34,9 +34,6 @@ namespace TetrisGame
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            // 
-            // Form1
-            // 
             this.ClientSize = new System.Drawing.Size(300, 600);
             this.Name = "Form1";
             this.ResumeLayout(false);
@@ -57,8 +54,6 @@ namespace TetrisGame
             new int[,] { {1,1}, {1,0}, {1,1} },                
             new int[,] { {0,1,1,1}, {1,1,0,0} }                
         };
-
-        // UI Elements
         private Panel sidePanel;
         private Label scoreLabel;
         private Label timeLabel;
@@ -213,8 +208,7 @@ namespace TetrisGame
             clockTimer.Tick += (s, e) => {
                 gameTime++;
                 timeLabel.Text = $"{gameTime / 60:00}:{gameTime % 60:00}";
-
-                // Увеличиваем уровень каждые 30 секунд
+                
                 if (gameTime % 30 == 0 && gameTime > 0)
                 {
                     level++;
@@ -383,17 +377,14 @@ namespace TetrisGame
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
-
-            // Рисуем фон
+            
             g.DrawImage(background, 0, 0, ClientSize.Width - 150, ClientSize.Height);
-
-            // Рисуем сетку с прозрачностью
+            
             using (var gridBrush = new SolidBrush(Color.FromArgb(100, 0, 0, 50)))
             {
                 g.FillRectangle(gridBrush, 0, 0, 300, 600);
             }
 
-            // Рисуем игровое поле
             for (int i = 0; i < 20; i++)
             {
                 for (int j = 0; j < 10; j++)
@@ -407,7 +398,6 @@ namespace TetrisGame
                 }
             }
 
-            // Рисуем текущую фигуру
             if (currentPiece != null)
             {
                 int colorIndex = Array.IndexOf(pieces, currentPiece);
