@@ -7,168 +7,161 @@ namespace GameCollection.Forms
 {
     public class Snake1Form : Form
     {
-        private const int GridSize = 20;
+        private const int CellSize = 30;
         private const int Width = 600;
         private const int Height = 600;
-        private const int TimerInterval = 100; // СКОРОСТЬ
-        private readonly Brush BlackBrush = Brushes.Black;
-        private readonly Brush GreenBrush = Brushes.Green;
-        private readonly Brush RedBrush = Brushes.Red;
-        private readonly Brush WhiteBrush = Brushes.White;
+        private const int GameSpeed = 150;
+
         private List<Point> snake;
         private Point food;
         private Point direction;
-        private bool isGameOver;
-        private Random random;
+        private bool isGameRunning;
         private Timer gameTimer;
-        private Button menuButton;
-        private Label scoreLabel;
+        private Random random;
         private int score;
 
         public Snake1Form()
         {
-            this.Text = "Змейка";
+            InitializeForm();
+            InitializeGame();
+        }
+
+        private void InitializeForm()
+        {
+            this.Text = "Snake Game";
             this.ClientSize = new Size(Width, Height);
             this.DoubleBuffered = true;
-            this.BackColor = Color.FromArgb(30, 30, 40);
-            this.KeyDown += HandleKeyPress;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
-            random = new Random();
-            InitializeGame();
-
-            menuButton = new Button
-            {
-                Text = "Меню",
-                Font = new Font("Arial", 10),
-                Size = new Size(80, 30),
-                Location = new Point(10, 10),
-                BackColor = Color.LightGray,
-                ForeColor = Color.Black
-            };
-            menuButton.Click += (sender, e) => this.Close();
-            this.Controls.Add(menuButton);
-            gameTimer = new Timer();
-            gameTimer.Interval = TimerInterval;
-            gameTimer.Tick += UpdateGame;
-            gameTimer.Start();
+            this.BackColor = Color.Black;
         }
 
         private void InitializeGame()
         {
-            snake = new List<Point>
-            {
-                new Point(Width / 2 / GridSize, Height / 2 / GridSize) 
-            };
-            direction = new Point(1, 0); 
-            isGameOver = false;
+            snake = new List<Point> { new Point(10, 10) };
+            direction = new Point(1, 0);
+            random = new Random();
             score = 0;
+            isGameRunning = true;
+
             SpawnFood();
-            UpdateScoreLabel();
+
+            gameTimer = new Timer();
+            gameTimer.Interval = GameSpeed;
+            gameTimer.Tick += GameUpdate;
+            gameTimer.Start();
+
+            this.KeyDown += HandleInput;
+            this.Paint += Render;
+            this.FormClosing += (s, e) => Cleanup();
         }
 
-        private void UpdateScoreLabel()
+        private void Cleanup()
         {
-            if (scoreLabel == null)
+            if (gameTimer != null)
             {
-                scoreLabel = new Label
-                {
-                    Font = new Font("Arial", 14),
-                    ForeColor = Color.White,
-                    AutoSize = true,
-                    Location = new Point(Width - 150, 10)
-                };
-                this.Controls.Add(scoreLabel);
+                gameTimer.Stop();
+                gameTimer.Dispose();
             }
-            scoreLabel.Text = $"Счёт: {score}";
         }
 
-        private void SpawnFood()
+        private void GameUpdate(object sender, EventArgs e)
         {
-            int maxX = Width / GridSize;
-            int maxY = Height / GridSize;
-            do
-            {
-                food = new Point(random.Next(0, maxX), random.Next(0, maxY));
-            } while (snake.Contains(food)); 
+            if (!isGameRunning) return;
+
+            MoveSnake();
+            CheckCollision();
+            this.Invalidate();
         }
 
-        private void UpdateGame(object sender, EventArgs e)
+        private void MoveSnake()
         {
-            if (isGameOver) return;
-
             Point head = snake[0];
             Point newHead = new Point(head.X + direction.X, head.Y + direction.Y);
-
-            if (newHead.X < 0 || newHead.Y < 0 || newHead.X >= Width / GridSize || newHead.Y >= Height / GridSize)
-            {
-                GameOver();
-                return;
-            }
-
-            if (snake.Contains(newHead))
-            {
-                GameOver();
-                return;
-            }
-
             snake.Insert(0, newHead);
+
             if (newHead == food)
             {
                 score += 10;
-                UpdateScoreLabel();
                 SpawnFood();
             }
             else
             {
                 snake.RemoveAt(snake.Count - 1);
             }
+        }
 
-            this.Invalidate(); 
+        private void CheckCollision()
+        {
+            Point head = snake[0];
+
+            if (head.X < 0 || head.Y < 0 ||
+                head.X >= Width / CellSize || head.Y >= Height / CellSize ||
+                snake.IndexOf(head, 1) != -1)
+            {
+                GameOver();
+            }
         }
 
         private void GameOver()
         {
-            isGameOver = true;
+            isGameRunning = false;
             gameTimer.Stop();
-            MessageBox.Show($"Игра окончена! Ваш счёт: {score}", "Змейка", MessageBoxButtons.OK);
-            InitializeGame();
-            gameTimer.Start();
+            MessageBox.Show($"Game Over! Score: {score}");
+            Cleanup();
+            this.Close();
         }
 
-        private void HandleKeyPress(object sender, KeyEventArgs e)
+        private void SpawnFood()
+        {
+            do
+            {
+                food = new Point(
+                    random.Next(0, Width / CellSize),
+                    random.Next(0, Height / CellSize));
+            } while (snake.Contains(food));
+        }
+
+        private void HandleInput(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
-                case Keys.Up:
-                    if (direction.Y != 1) direction = new Point(0, -1);
+                case Keys.Up when direction.Y != 1:
+                    direction = new Point(0, -1);
                     break;
-                case Keys.Down:
-                    if (direction.Y != -1) direction = new Point(0, 1);
+                case Keys.Down when direction.Y != -1:
+                    direction = new Point(0, 1);
                     break;
-                case Keys.Left:
-                    if (direction.X != 1) direction = new Point(-1, 0);
+                case Keys.Left when direction.X != 1:
+                    direction = new Point(-1, 0);
                     break;
-                case Keys.Right:
-                    if (direction.X != -1) direction = new Point(1, 0);
-                    break;
-                case Keys.Escape:
-                    this.Close();
+                case Keys.Right when direction.X != -1:
+                    direction = new Point(1, 0);
                     break;
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        private void Render(object sender, PaintEventArgs e)
         {
-            base.OnPaint(e);
             Graphics g = e.Graphics;
 
-            foreach (var segment in snake)
+            foreach (Point segment in snake)
             {
-                g.FillRectangle(GreenBrush, segment.X * GridSize, segment.Y * GridSize, GridSize, GridSize);
-                g.DrawRectangle(Pens.DarkGreen, segment.X * GridSize, segment.Y * GridSize, GridSize, GridSize);
+                g.FillRectangle(Brushes.Lime,
+                    segment.X * CellSize,
+                    segment.Y * CellSize,
+                    CellSize, CellSize);
             }
 
-            g.FillEllipse(RedBrush, food.X * GridSize, food.Y * GridSize, GridSize, GridSize);
+            g.FillEllipse(Brushes.Red,
+                food.X * CellSize,
+                food.Y * CellSize,
+                CellSize, CellSize);
+
+            g.DrawString($"Score: {score}",
+                new Font("Arial", 14),
+                Brushes.White,
+                new PointF(10, 10));
         }
     }
 }
