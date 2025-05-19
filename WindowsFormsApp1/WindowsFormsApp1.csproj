@@ -49,6 +49,9 @@
     <Compile Include="MainMenuForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="SnakeGame.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="TetrisForm.cs">
       <SubType>Form</SubType>
     </Compile>
