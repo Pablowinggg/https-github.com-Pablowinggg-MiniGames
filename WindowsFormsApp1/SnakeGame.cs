@@ -7,19 +7,14 @@ namespace GameCollection.Forms
 {
     public class Snake1Form : Form
     {
-        // Константы
         private const int GridSize = 20;
         private const int Width = 600;
         private const int Height = 600;
-        private const int TimerInterval = 100; // Скорость змейки (мс)
-
-        // Цвета
+        private const int TimerInterval = 100; // СКОРОСТЬ
         private readonly Brush BlackBrush = Brushes.Black;
         private readonly Brush GreenBrush = Brushes.Green;
         private readonly Brush RedBrush = Brushes.Red;
         private readonly Brush WhiteBrush = Brushes.White;
-
-        // Игровые переменные
         private List<Point> snake;
         private Point food;
         private Point direction;
@@ -32,19 +27,15 @@ namespace GameCollection.Forms
 
         public Snake1Form()
         {
-            // Настройка окна
             this.Text = "Змейка";
             this.ClientSize = new Size(Width, Height);
             this.DoubleBuffered = true;
             this.BackColor = Color.FromArgb(30, 30, 40);
             this.KeyDown += HandleKeyPress;
             this.KeyPreview = true;
-
-            // Инициализация игры
             random = new Random();
             InitializeGame();
 
-            // Кнопка "Меню"
             menuButton = new Button
             {
                 Text = "Меню",
@@ -56,8 +47,6 @@ namespace GameCollection.Forms
             };
             menuButton.Click += (sender, e) => this.Close();
             this.Controls.Add(menuButton);
-
-            // Таймер для обновления игры
             gameTimer = new Timer();
             gameTimer.Interval = TimerInterval;
             gameTimer.Tick += UpdateGame;
@@ -68,9 +57,9 @@ namespace GameCollection.Forms
         {
             snake = new List<Point>
             {
-                new Point(Width / 2 / GridSize, Height / 2 / GridSize) // Начальная позиция
+                new Point(Width / 2 / GridSize, Height / 2 / GridSize) 
             };
-            direction = new Point(1, 0); // Движение вправо
+            direction = new Point(1, 0); 
             isGameOver = false;
             score = 0;
             SpawnFood();
@@ -100,7 +89,7 @@ namespace GameCollection.Forms
             do
             {
                 food = new Point(random.Next(0, maxX), random.Next(0, maxY));
-            } while (snake.Contains(food)); // Чтобы еда не спавнилась в змейке
+            } while (snake.Contains(food)); 
         }
 
         private void UpdateGame(object sender, EventArgs e)
@@ -110,14 +99,12 @@ namespace GameCollection.Forms
             Point head = snake[0];
             Point newHead = new Point(head.X + direction.X, head.Y + direction.Y);
 
-            // Проверка на столкновение с границами
             if (newHead.X < 0 || newHead.Y < 0 || newHead.X >= Width / GridSize || newHead.Y >= Height / GridSize)
             {
                 GameOver();
                 return;
             }
 
-            // Проверка на столкновение с собой
             if (snake.Contains(newHead))
             {
                 GameOver();
@@ -125,8 +112,6 @@ namespace GameCollection.Forms
             }
 
             snake.Insert(0, newHead);
-
-            // Проверка на съедание еды
             if (newHead == food)
             {
                 score += 10;
@@ -138,7 +123,7 @@ namespace GameCollection.Forms
                 snake.RemoveAt(snake.Count - 1);
             }
 
-            this.Invalidate(); // Перерисовка
+            this.Invalidate(); 
         }
 
         private void GameOver()
@@ -177,14 +162,12 @@ namespace GameCollection.Forms
             base.OnPaint(e);
             Graphics g = e.Graphics;
 
-            // Отрисовка змейки
             foreach (var segment in snake)
             {
                 g.FillRectangle(GreenBrush, segment.X * GridSize, segment.Y * GridSize, GridSize, GridSize);
                 g.DrawRectangle(Pens.DarkGreen, segment.X * GridSize, segment.Y * GridSize, GridSize, GridSize);
             }
 
-            // Отрисовка еды
             g.FillEllipse(RedBrush, food.X * GridSize, food.Y * GridSize, GridSize, GridSize);
         }
     }

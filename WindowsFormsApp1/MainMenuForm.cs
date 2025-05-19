@@ -27,8 +27,6 @@ namespace GameCollection.Forms
             this.BackColor = Color.FromArgb(30, 30, 40);
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-
-            // Стилизованный заголовок
             var titleLabel = new Label
             {
                 Text = "СПИСОК ИГР",
@@ -38,7 +36,6 @@ namespace GameCollection.Forms
                 Location = new Point(300, 50)
             };
 
-            // Создание стилизованных кнопок
             var btnTetris = CreateGameButton("Волшебный Тетрис", 300, 150, Color.FromArgb(0, 150, 255));
             var btnMatch3 = CreateGameButton("Три в ряд", 300, 250, Color.FromArgb(255, 100, 0));
             var btnSnake = CreateGameButton("Змейка", 300, 350, Color.FromArgb(0, 200, 100));
@@ -66,8 +63,6 @@ namespace GameCollection.Forms
                 BackColor = baseColor,
                 Cursor = Cursors.Hand
             };
-
-            // Стиль кнопки
             btn.FlatAppearance.BorderSize = 0;
             btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(
                 Math.Min(baseColor.R + 30, 255),
@@ -79,8 +74,6 @@ namespace GameCollection.Forms
                 Math.Max(baseColor.G - 30, 0),
                 Math.Max(baseColor.B - 30, 0)
             );
-
-            // Эффект тени
             btn.Paint += (sender, e) =>
             {
                 Button button = (Button)sender;
@@ -101,8 +94,6 @@ namespace GameCollection.Forms
                     ButtonBorderStyle.Outset
                 );
             };
-
-            // Анимация при наведении
             btn.MouseEnter += (sender, e) =>
             {
                 btn.Size = new Size(210, 65);
