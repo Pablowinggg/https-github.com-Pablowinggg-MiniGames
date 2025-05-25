@@ -85,7 +85,7 @@ namespace TetrisGame
         {
             try
             {
-                background = new Bitmap("space_bg.jpg");
+                background = new Bitmap("фото на бекграунд");
             }
             catch
             {

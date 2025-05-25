@@ -60,7 +60,7 @@ namespace GameCollection.Forms
         {
             try
             {
-                desertBackground = new Bitmap("desert_bg.jpg");
+                desertBackground = new Bitmap("фото на бекгрануд");
             }
             catch
             {

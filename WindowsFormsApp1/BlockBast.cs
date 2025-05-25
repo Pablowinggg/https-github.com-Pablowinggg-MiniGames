@@ -26,11 +26,6 @@ namespace SpaceDestroyer
         private Bitmap cometSprite;
         private Bitmap bulletSprite;
 
-        public SpaceGame()
-        {
-            InitializeComponent();
-            InitializeGame();
-        }
         private void InitializeComponent()
         {
             this.SuspendLayout();
@@ -152,7 +147,7 @@ namespace SpaceDestroyer
         private void GameOver()
         {
             isGameOver = true;
-            MessageBox.Show($"Game Over! Your score: {score}", "Space Comet Destroyer");
+            MessageBox.Show("Игра завершена. Ваш счет! {score}", "Space Comet Destroyer");
             InitializeGame();
         }
 
@@ -176,7 +171,7 @@ namespace SpaceDestroyer
 
             if (isGameOver)
             {
-                g.DrawString("GAME OVER", new Font("Arial", 32), Brushes.Red, GameWidth / 2 - 100, GameHeight / 2 - 30);
+                g.DrawString("Игра завершена", new Font("Arial", 32), Brushes.Red, GameWidth / 2 - 100, GameHeight / 2 - 30);
             }
         }
     }

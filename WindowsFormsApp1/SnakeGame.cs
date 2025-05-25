@@ -107,7 +107,7 @@ namespace GameCollection.Forms
         {
             isGameRunning = false;
             gameTimer.Stop();
-            MessageBox.Show($"Game Over! Score: {score}");
+            MessageBox.Show($"Игра закончена!Ваш счет: {score}");
             Cleanup();
             this.Close();
         }
